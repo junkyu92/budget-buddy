@@ -35,7 +35,7 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
         with:
-          arguments: build -x test
+          arguments: build
 
       #빌드 실패 시 comment등록, pr closed
       #if: ${{ failure() }} 를 사용하면 직전 스크립트가 실패 시 작동한다.
