@@ -27,6 +27,7 @@ class UserServiceTest {
     @InjectMocks private UserService userService;
 
     @Mock private UserRepository userRepository;
+    @Mock private JwtTokenProvider jwtTokenProvider;
     @Mock private PasswordEncoder passwordEncoder;
 
     private final String account = String.valueOf(UUID.randomUUID());
