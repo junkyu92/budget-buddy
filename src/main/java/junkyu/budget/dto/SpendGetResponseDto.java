@@ -29,4 +29,5 @@ public class SpendGetResponseDto {
            amount = (long) ((double) amount / (double) spendGetResponseDto.getAmount() * 100);
         }
     }
+
 }
