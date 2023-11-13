@@ -20,6 +20,7 @@ import static junkyu.budget.domain.QSpend.*;
 public class SpendQRepositoryImpl implements SpendQRepository {
 
     private final JPAQueryFactory queryFactory;
+    private final LocalDate localDate = LocalDate.now();
 
     /**
      * 카테고리별 합계 조회
@@ -28,7 +29,7 @@ public class SpendQRepositoryImpl implements SpendQRepository {
     public List<SpendGetResponseDto> findBySpendListRequestDto(SpendGetRequestDto spendGetRequestDto) {
         return queryFactory.select(Projections.constructor(SpendGetResponseDto.class, spend.category, spend.amount.sum()))
                 .from(spend)
-                .where(searchCondition(spendGetRequestDto))
+                .where(userIdAndInputMonth(spendGetRequestDto))
                 .groupBy(spend.category)
                 .fetch();
     }
@@ -37,7 +38,7 @@ public class SpendQRepositoryImpl implements SpendQRepository {
     public Long thisMonthTotalSpendById(Long userId) {
         return queryFactory.select(spend.amount.sum())
                 .from(spend)
-                .where(searchCondition2(userId))
+                .where(userIdAndThisMonth(userId))
                 .groupBy(spend.user.id)
                 .fetchOne();
     }
@@ -46,7 +47,43 @@ public class SpendQRepositoryImpl implements SpendQRepository {
     public List<SpendTodayResponseDto> getTodaySpendList(Long userId) {
         return queryFactory.select(Projections.constructor(SpendTodayResponseDto.class, spend))
                 .from(spend)
-                .where(searchCondition2(userId))
+                .where(userIdAndThisMonth(userId))
+                .fetch();
+    }
+
+    @Override
+    public List<SpendGetResponseDto> lastMonthDayOfMonthSpend(Long userId) {
+        return queryFactory.select(Projections.constructor(SpendGetResponseDto.class, spend.category, spend.amount.sum()))
+                .from(spend)
+                .where(userIdAndLastMonthDayOfMonth(userId))
+                .groupBy(spend.category)
+                .fetch();
+    }
+
+    @Override
+    public List<SpendGetResponseDto> dayOfMonthSpend(Long userId) {
+        return queryFactory.select(Projections.constructor(SpendGetResponseDto.class, spend.category, spend.amount.sum()))
+                .from(spend)
+                .where(userIdAndThisMonth(userId))
+                .groupBy(spend.category)
+                .fetch();
+    }
+
+    @Override
+    public List<SpendGetResponseDto> lastDayOfWeekSpend(Long userId) {
+        return queryFactory.select(Projections.constructor(SpendGetResponseDto.class, spend.category, spend.amount.sum()))
+                .from(spend)
+                .where(userIdAndLastDayOfWeek(userId))
+                .groupBy(spend.category)
+                .fetch();
+    }
+
+    @Override
+    public List<SpendGetResponseDto> todaySpend(Long userId) {
+        return queryFactory.select(Projections.constructor(SpendGetResponseDto.class, spend.category, spend.amount.sum()))
+                .from(spend)
+                .where(userIdAndToday(userId))
+                .groupBy(spend.category)
                 .fetch();
     }
 
@@ -60,15 +97,43 @@ public class SpendQRepositoryImpl implements SpendQRepository {
     }
 
     public BooleanExpression thisMonth(){
-        return spend.createdAt.year().eq(LocalDate.now().getYear())
-                .and(spend.createdAt.month().eq(LocalDate.now().getMonthValue()));
+        return spend.createdAt.year().eq(localDate.getYear())
+                .and(spend.createdAt.month().eq(localDate.getMonthValue()));
     }
-    public BooleanExpression searchCondition(SpendGetRequestDto spendGetRequestDto){
+    public BooleanExpression lastMonthDayOfMonth(){
+        LocalDate lastMonth = localDate.minusMonths(1);
+        return spend.createdAt.year().eq(lastMonth.getYear())
+                .and(spend.createdAt.month().eq(lastMonth.getMonthValue()))
+                .and(spend.createdAt.dayOfMonth().between(1, lastMonth.getDayOfMonth()));
+    }
+    public BooleanExpression today(){
+        return spend.createdAt.year().eq(localDate.getYear())
+                .and(spend.createdAt.month().eq(localDate.getMonthValue()))
+                .and(spend.createdAt.dayOfMonth().eq(localDate.getDayOfMonth()));
+    }
+
+    public BooleanExpression lastDayOfWeek(){
+        return spend.createdAt.year().eq(localDate.getYear())
+                .and(spend.createdAt.month().eq(localDate.getMonthValue()))
+                .and(spend.createdAt.dayOfMonth().eq(localDate.getDayOfMonth()-7));
+    }
+    public BooleanExpression userIdAndInputMonth(SpendGetRequestDto spendGetRequestDto){
         return userEq(spendGetRequestDto.getUserId()).and(dateEq(spendGetRequestDto));
     }
 
-    public BooleanExpression searchCondition2(Long userId){
+    public BooleanExpression userIdAndThisMonth(Long userId){
         return userEq(userId).and(thisMonth());
+    }
+
+    public BooleanExpression userIdAndToday(Long userId){
+        return userEq(userId).and(today());
+    }
+    public BooleanExpression userIdAndLastMonthDayOfMonth(Long userId){
+        return userEq(userId).and(lastMonthDayOfMonth());
+    }
+
+    public BooleanExpression userIdAndLastDayOfWeek(Long userId){
+        return userEq(userId).and(lastDayOfWeek());
     }
 
 }
