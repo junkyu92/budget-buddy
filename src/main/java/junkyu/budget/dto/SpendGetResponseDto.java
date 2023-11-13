@@ -23,4 +23,10 @@ public class SpendGetResponseDto {
                 .amount(spend.getAmount())
                 .build();
     }
+
+    public void getPercent(SpendGetResponseDto spendGetResponseDto){
+        if(category.equals(spendGetResponseDto.getCategory())){
+           amount = (long) ((double) spendGetResponseDto.getAmount() / (double) amount) * 100;
+        }
+    }
 }
