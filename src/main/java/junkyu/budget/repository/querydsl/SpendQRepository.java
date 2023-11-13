@@ -14,7 +14,7 @@ public interface SpendQRepository {
 
     List<SpendTodayResponseDto> getTodaySpendList(Long id);
 
-    List<SpendGetResponseDto> lastMonthDayOfMonthSpend(Long userId, LocalDate lastMonth);
+    List<SpendGetResponseDto> lastMonthDayOfMonthSpend(Long userId);
     List<SpendGetResponseDto> dayOfMonthSpend(Long userId);
     List<SpendGetResponseDto> lastDayOfWeekSpend(Long userId);
     List<SpendGetResponseDto> todaySpend(Long userId);

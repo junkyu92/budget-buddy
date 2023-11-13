@@ -52,7 +52,7 @@ public class SpendQRepositoryImpl implements SpendQRepository {
     }
 
     @Override
-    public List<SpendGetResponseDto> lastMonthDayOfMonthSpend(Long userId, LocalDate lastMonth) {
+    public List<SpendGetResponseDto> lastMonthDayOfMonthSpend(Long userId) {
         return queryFactory.select(Projections.constructor(SpendGetResponseDto.class, spend.category, spend.amount.sum()))
                 .from(spend)
                 .where(userIdAndLastMonthDayOfMonth(userId))

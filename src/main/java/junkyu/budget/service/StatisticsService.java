@@ -19,11 +19,7 @@ public class StatisticsService {
     private final SpendRepository spendRepository;
 
     public List<SpendGetResponseDto> compareToLastMonth(Long userId){
-        LocalDate now = LocalDate.now();
-
-        LocalDate lastMonth = now.minusMonths(1);
-
-        List<SpendGetResponseDto> lastMonthResult = spendRepository.lastMonthDayOfMonthSpend(userId, lastMonth);
+        List<SpendGetResponseDto> lastMonthResult = spendRepository.lastMonthDayOfMonthSpend(userId);
         if(lastMonthResult.isEmpty()) throw new CustomException(ErrorCode.LAST_MONTH_NOT_FOUND);
         addTotal(lastMonthResult);
 
