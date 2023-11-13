@@ -32,6 +32,7 @@ public enum ErrorCode {
     LAST_MONTH_NOT_FOUND(HttpStatus.NOT_FOUND, "지난 달 데이터가 존재하지 않습니다."),
     LAST_DAY_OF_WEEK_NOT_FOUND(HttpStatus.NOT_FOUND, "지난 요일 데이터가 존재하지 않습니다.");
 
+
     private final HttpStatus status;
     private final String message;
 }

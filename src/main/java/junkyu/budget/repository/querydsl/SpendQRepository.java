@@ -5,6 +5,7 @@ import junkyu.budget.dto.SpendGetResponseDto;
 import junkyu.budget.dto.SpendTodayResponseDto;
 
 import java.time.LocalDate;
+
 import java.util.List;
 
 public interface SpendQRepository {
@@ -18,4 +19,5 @@ public interface SpendQRepository {
     List<SpendGetResponseDto> dayOfMonthSpend(Long userId);
     List<SpendGetResponseDto> lastDayOfWeekSpend(Long userId);
     List<SpendGetResponseDto> todaySpend(Long userId);
+
 }
