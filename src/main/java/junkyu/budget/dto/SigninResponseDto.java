@@ -10,5 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SigninResponseDto {
     private String accessToken;
+    private String tokenType;
+    private Integer expiresIn;
     private String refreshToken;
 }

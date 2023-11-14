@@ -25,6 +25,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private static final String[] ALL_WHITELIST ={
             "/api/v1/users/signin"
             , "/api/v1/users/signup"
+            , "/api/v1/users/token"
             , "/swagger-ui/**"
             , "/swagger-resources/**"
             , "/swagger-resources"
