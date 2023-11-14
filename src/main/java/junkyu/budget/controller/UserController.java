@@ -6,6 +6,7 @@ import junkyu.budget.config.provider.JwtTokenProvider;
 import junkyu.budget.dto.SigninRequestDto;
 import junkyu.budget.dto.SigninResponseDto;
 import junkyu.budget.dto.SignupDto;
+import junkyu.budget.dto.TokenRequestDto;
 import junkyu.budget.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,15 +29,24 @@ public class UserController {
 
     @PostMapping("/signup")
     @ApiOperation(value = "회원가입", notes = "회원가입 api입니다.")
-    public ResponseEntity<Void> signup(@Valid @RequestBody SignupDto signupDto){
+    public ResponseEntity<Void> signup(@Valid @RequestBody SignupDto signupDto) {
         userService.signup(signupDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/signin")
     @ApiOperation(value = "로그인", notes = "로그인 api입니다.")
-    public ResponseEntity<SigninResponseDto> signin(@Valid @RequestBody SigninRequestDto signinRequestDto){
+    public ResponseEntity<SigninResponseDto> signin(@Valid @RequestBody SigninRequestDto signinRequestDto) {
         SigninResponseDto signinResponseDto = userService.signin(signinRequestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(signinResponseDto);
+    }
+
+    @PostMapping("/token")
+    @ApiOperation(value = "리프레시 토큰으로 액세스토큰 재발급", notes = "액세스토큰 재발급 api입니다.")
+    public ResponseEntity<SigninResponseDto> token(@Valid @RequestBody TokenRequestDto tokenRequestDto){
+        String refreshToken = tokenRequestDto.getRefreshToken();
+        String accountFromToken = jwtTokenProvider.getAccountFromToken(refreshToken);
+        SigninResponseDto signinResponseDto = userService.getAccessToken(refreshToken, accountFromToken);
         return ResponseEntity.status(HttpStatus.OK).body(signinResponseDto);
     }
 }

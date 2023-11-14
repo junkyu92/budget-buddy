@@ -10,6 +10,7 @@ import junkyu.budget.enums.UserRole;
 import junkyu.budget.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,6 +28,7 @@ import java.util.List;
 public class JwtTokenProvider {
 
     private final UserDetailsServiceImpl userDetailsService;
+    private final StringRedisTemplate stringRedisTemplate;
 
     @Value("${token.key}")
     private String issuer;
@@ -56,7 +58,7 @@ public class JwtTokenProvider {
 
     /* Refresh Token 생성 메서드*/
     public String generateRefreshToken(String account) {
-        return Jwts.builder()
+        String refreshToken = Jwts.builder()
                 .claim("account", account)
                 .setIssuer(issuer)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
@@ -64,6 +66,15 @@ public class JwtTokenProvider {
                 .setExpiration(new Date(System.currentTimeMillis() + (24 * 60 * 60 * 1000)))
                 .signWith(secretKey)
                 .compact();
+
+        //레디스에 저장
+        String redisKey = "refreshToken:" + account;
+        if(stringRedisTemplate.opsForValue().get(redisKey)!=null){
+            stringRedisTemplate.delete(redisKey);
+        }
+        stringRedisTemplate.opsForValue().set(redisKey, refreshToken);
+
+        return refreshToken;
     }
 
     /* 토큰 유효성 검증 */
