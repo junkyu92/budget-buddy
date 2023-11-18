@@ -348,6 +348,9 @@
   ```
 </details>
 
+## 테스트코드
+![test_code.png](readme_source/test_code/test_code.png)
+
 ## 시스템 구성도
 ![시스템 구성도](./readme_source/system_diagram/system_diagram.png)
 
